@@ -9,158 +9,300 @@ html, body {
 }
 
 body {
-  font-family: -apple-system, "Segoe UI", "PingFang SC", sans-serif;
+  font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
   background: #1e1f22;
   color: #dbdee1;
+  overflow: hidden;
 }
 
-.hidden { display: none !important; }
-
-/* 登录页 */
-#login {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  max-width: 320px;
-  margin: 100px auto;
-  padding: 24px;
-  background: #2b2d31;
-  border-radius: 12px;
-}
-#login h2 { text-align: center; }
-#login input, #login button {
-  padding: 12px;
-  border-radius: 6px;
-  border: none;
-  font-size: 16px;
-}
-#login input { background: #1e1f22; color: #fff; }
-#login button { background: #5865f2; color: #fff; }
-
-/* 聊天区：占满整屏，flex 布局 */
-#chat {
+#app {
   display: flex;
   height: 100vh;
 }
 
-/* 侧栏 */
-aside {
-  width: 200px;
-  background: #2b2d31;
-  padding: 16px;
-  overflow-y: auto;
-}
-aside .me {
-  font-weight: bold;
-  margin-bottom: 16px;
-  color: #fff;
-}
-aside .label {
-  font-size: 12px;
-  color: #949ba4;
-  margin-bottom: 8px;
-}
-#users { list-style: none; }
-#users li {
-  padding: 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-bottom: 4px;
-}
-#users li:hover { background: #35373c; }
-#users li.active { background: #404249; color: #fff; }
-
-/* 主聊天区 */
-main {
-  flex: 1;
+/* ============ 第一栏：Space 列表 ============ */
+#spaces {
+  width: 72px;
+  background: #1e1f22;
   display: flex;
   flex-direction: column;
-  min-width: 0;
-}
-
-header {
-  padding: 14px 16px;
-  background: #313338;
-  border-bottom: 1px solid #1e1f22;
-  font-weight: bold;
-}
-
-/* 消息列表：占满剩余空间，可滚动 */
-#messages {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
+  align-items: center;
+  padding: 12px 0;
   gap: 8px;
-}
-
-.msg {
-  max-width: 75%;
-  padding: 9px 13px;
-  border-radius: 14px;
-  line-height: 1.45;
-  word-break: break-word;
-}
-.msg.them {
-  align-self: flex-start;
-  background: #383a40;
-}
-.msg.me {
-  align-self: flex-end;
-  background: #5865f2;
-  color: #fff;
-}
-.msg .meta {
-  font-size: 11px;
-  opacity: 0.7;
-  margin-bottom: 3px;
-}
-.system {
-  align-self: center;
-  font-size: 12px;
-  color: #949ba4;
-}
-.error {
-  align-self: center;
-  color: #f23f43;
-  font-size: 13px;
-}
-
-/* 输入框：固定在底部，永远可见 */
-#send-form {
-  display: flex;
-  gap: 8px;
-  padding: 10px 12px;
-  background: #313338;
   flex-shrink: 0;
 }
 
-#send-form input {
+.space-item {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: #313338;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+  cursor: pointer;
+  transition: border-radius 0.15s, background 0.15s;
+  position: relative;
+}
+.space-item:hover { border-radius: 50%; background: #5865f2; }
+.space-item.active { border-radius: 50%; background: #5865f2; }
+.space-item.active::before {
+  content: "";
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 32px;
+  background: #fff;
+  border-radius: 0 4px 4px 0;
+}
+.space-item.add { color: #23a559; font-size: 24px; }
+.space-item.add:hover { background: #23a559; color: #fff; }
+
+.space-divider {
+  width: 32px;
+  height: 2px;
+  background: #35373c;
+  border-radius: 1px;
+}
+
+/* ============ 第二栏：频道列表 ============ */
+#channels {
+  width: 240px;
+  background: #2b2d31;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.server-name {
+  padding: 14px 16px;
+  font-weight: bold;
+  color: #fff;
+  border-bottom: 1px solid #1e1f22;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+.server-name:hover { background: #35373c; }
+.chevron { color: #b5bac1; }
+
+.channel-group {
+  padding: 16px 8px 0;
+}
+.group-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #949ba4;
+  padding: 0 8px 4px;
+  font-weight: 600;
+}
+
+.channel-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 8px;
+  border-radius: 4px;
+  color: #949ba4;
+  cursor: pointer;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+.channel-item:hover { background: #35373c; color: #dbdee1; }
+.channel-item.active { background: #404249; color: #fff; }
+
+.hash { color: #949ba4; font-weight: bold; }
+.channel-item.active .hash { color: #dbdee1; }
+
+.avatar-sm {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #5865f2;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+.channel-item.dm { justify-content: flex-start; }
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #80848e;
+  margin-left: auto;
+}
+.dot.online { background: #23a559; }
+
+.me-bar {
+  margin-top: auto;
+  background: #232428;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.avatar-sm.me { background: #23a559; }
+.me-info { font-size: 13px; line-height: 1.2; }
+.me-name { color: #fff; font-weight: 600; }
+.me-status { color: #949ba4; font-size: 11px; }
+
+/* ============ 第三栏：聊天区 ============ */
+#chat {
   flex: 1;
-  padding: 11px 15px;
-  border-radius: 22px;
+  display: flex;
+  flex-direction: column;
+  background: #313338;
+  min-width: 0;
+}
+
+.chat-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid #1e1f22;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.chat-title {
+  color: #fff;
+  font-weight: bold;
+  font-size: 15px;
+}
+.chat-topic {
+  color: #949ba4;
+  font-size: 13px;
+  border-left: 1px solid #4e5058;
+  padding-left: 8px;
+  margin-left: 4px;
+}
+
+#dm-list .channel-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#dm-list .avatar-sm {
+  width: 28px;
+  height: 28px;
+  font-size: 13px;
+}
+
+#dm-list .name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.msg-group {
+  display: flex;
+  gap: 12px;
+  padding: 6px 16px;
+}
+.msg-group:hover { background: #2e3035; }
+
+.msg-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #5865f2;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+.msg-group.me .msg-avatar { background: #23a559; }
+
+.msg-body { flex: 1; min-width: 0; }
+.msg-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+.msg-author {
+  color: #fff;
+  font-weight: 600;
+  font-size: 15px;
+}
+.msg-time {
+  color: #949ba4;
+  font-size: 11px;
+}
+.msg-text {
+  color: #dbdee1;
+  font-size: 15px;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+.system-msg {
+  text-align: center;
+  color: #949ba4;
+  font-size: 13px;
+  padding: 8px;
+}
+
+/* 输入框 */
+#send-form {
+  display: flex;
+  gap: 8px;
+  padding: 0 16px 16px;
+  flex-shrink: 0;
+}
+#input {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 8px;
   border: none;
   background: #383a40;
   color: #fff;
   font-size: 16px;
+  font-family: inherit;
   min-width: 0;
 }
-#send-form input:focus { outline: none; }
+#input:focus { outline: none; }
+#input::placeholder { color: #6d6f78; }
 
 #send-form button {
   padding: 0 20px;
   border: none;
-  border-radius: 22px;
+  border-radius: 8px;
   background: #5865f2;
   color: #fff;
   font-size: 15px;
+  cursor: pointer;
+  flex-shrink: 0;
 }
-#send-form button:disabled { opacity: 0.5; }
+#send-form button:hover { background: #4752c4; }
 
-/* 窄屏：侧栏变窄一点，不折叠 */
-@media (max-width: 600px) {
-  aside { width: 120px; padding: 10px; }
-  aside .me { font-size: 13px; }
-  #users li { padding: 8px; font-size: 14px; }
+/* ============ 窄屏适配 ============ */
+@media (max-width: 768px) {
+  #spaces { width: 56px; }
+  .space-item { width: 40px; height: 40px; font-size: 16px; }
+  #channels { width: 160px; }
+  .chat-topic { display: none; }
 }

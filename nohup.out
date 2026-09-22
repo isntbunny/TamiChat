@@ -54,3 +54,36 @@ File not found: /data/data/com.termux/files/usr/lib/code-server/lib/vscode/node_
 [15:17:31] [127.0.0.1][27f78b2b][ExtensionHostConnection] <14248> [reconnection-grace-time] Extension host: read VSCODE_RECONNECTION_GRACE_TIME=10800000ms (10800s)
 
 [15:17:42] [File Watcher (node.js)] Failed to watch /system/bin for changes using fs.watch() (Error: EACCES: permission denied, watch '/system/bin')
+[15:22:29] [127.0.0.1][7e72139a][ExtensionHostConnection] <13676> Extension Host Process exited with code: 0, signal: null.
+[16:40:07] Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20) {
+  errno: -104,
+  code: 'ECONNRESET',
+  syscall: 'read'
+}
+[16:40:07] [127.0.0.1][c562fe04][ManagementConnection] The client has disconnected, will wait for reconnection 3h before disposing...
+File not found: /data/data/com.termux/files/usr/lib/code-server/lib/vscode/node_modules/vsda/rust/web/vsda_bg.wasm
+File not found: /data/data/com.termux/files/usr/lib/code-server/lib/vscode/node_modules/vsda/rust/web/vsda.js
+[16:40:50] [127.0.0.1][c562fe04][ManagementConnection] Another client has connected, will shorten the wait for reconnection 5m before disposing...
+[16:40:50] [127.0.0.1][0eecd23e][ManagementConnection] New connection established.
+[16:40:52] [127.0.0.1][0eecd23e][ManagementConnection] The client has disconnected gracefully, so the connection will be disposed.
+[16:45:50] [127.0.0.1][c562fe04][ManagementConnection] The reconnection short grace time of 5m has expired, so the connection will be disposed.
+[16:45:51] [127.0.0.1][27f78b2b][ExtensionHostConnection] <14248> Extension Host Process exited with code: 0, signal: null.
+File not found: /data/data/com.termux/files/usr/lib/code-server/lib/vscode/node_modules/vsda/rust/web/vsda_bg.wasm
+File not found: /data/data/com.termux/files/usr/lib/code-server/lib/vscode/node_modules/vsda/rust/web/vsda.js
+[17:25:34] [127.0.0.1][6a7496a4][ManagementConnection] New connection established.
+[17:25:36] [127.0.0.1][4292eb11][ExtensionHostConnection] New connection established.
+[17:25:36] [127.0.0.1][4292eb11][ExtensionHostConnection] <12281> Launched Extension Host Process.
+[17:25:40] [127.0.0.1][4292eb11][ExtensionHostConnection] <12281> [reconnection-grace-time] Extension host: read VSCODE_RECONNECTION_GRACE_TIME=10800000ms (10800s)
+
+[17:25:55] [File Watcher (node.js)] Failed to watch /system/bin for changes using fs.watch() (Error: EACCES: permission denied, watch '/system/bin')
+[17:29:43] [127.0.0.1][6a7496a4][ManagementConnection] The client has disconnected, will wait for reconnection 3h before disposing...
+File not found: /data/data/com.termux/files/usr/lib/code-server/lib/vscode/node_modules/vsda/rust/web/vsda_bg.wasm
+File not found: /data/data/com.termux/files/usr/lib/code-server/lib/vscode/node_modules/vsda/rust/web/vsda.js
+[17:55:20] [127.0.0.1][6a7496a4][ManagementConnection] Another client has connected, will shorten the wait for reconnection 5m before disposing...
+[17:55:20] [127.0.0.1][f9b63e01][ManagementConnection] New connection established.
+[17:55:22] [127.0.0.1][c56a0052][ExtensionHostConnection] New connection established.
+[17:55:22] [127.0.0.1][c56a0052][ExtensionHostConnection] <29973> Launched Extension Host Process.
+[17:55:26] [127.0.0.1][c56a0052][ExtensionHostConnection] <29973> [reconnection-grace-time] Extension host: read VSCODE_RECONNECTION_GRACE_TIME=10800000ms (10800s)
+
+[17:55:36] [File Watcher (node.js)] Failed to watch /system/bin for changes using fs.watch() (Error: EACCES: permission denied, watch '/system/bin')

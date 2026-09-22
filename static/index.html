@@ -7,26 +7,61 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<!-- 登录页 -->
 <div id="login">
-  <h2>TamiChat 单聊</h2>
-  <input id="username" placeholder="输入你的用户名" autocomplete="off">
-  <button onclick="login()">进入</button>
+  <h2>TamiChat</h2>
+  <input id="username" placeholder="用户名" autocomplete="username">
+  <input id="password" type="password" placeholder="密码（至少 6 位）" autocomplete="current-password">
+  <div class="btn-row">
+    <button onclick="doAuth('login')">登录</button>
+    <button onclick="doAuth('register')" class="secondary">注册</button>
+  </div>
+  <div id="auth-error" class="auth-error"></div>
 </div>
 
-<div id="chat" class="hidden">
-  <aside>
-    <div class="me">我：<span id="me"></span></div>
-    <div class="label">在线用户</div>
-    <ul id="users"></ul>
+<!-- 聊天主界面 -->
+<div id="app" class="hidden">
+
+  <!-- 第一栏：Space（暂时只放一个静态的） -->
+  <nav id="spaces">
+    <div class="space-item active" title="TamiChat">T</div>
+  </nav>
+
+  <!-- 第二栏：会话列表 -->
+  <aside id="channels">
+    <header class="server-name">
+      <span>TamiChat</span>
+    </header>
+
+    <div class="channel-group">
+      <div class="group-title">私聊</div>
+      <div id="dm-list"></div>
+    </div>
+
+    <div class="me-bar">
+      <span class="avatar-sm me" id="me-avatar">?</span>
+      <div class="me-info">
+        <div class="me-name" id="me-name">-</div>
+        <div class="me-status">在线</div>
+      </div>
+    </div>
   </aside>
-  <main>
-    <header id="peer">选择左侧用户开始聊天</header>
+
+  <!-- 第三栏：聊天区 -->
+  <main id="chat">
+    <header class="chat-header">
+      <span class="chat-title" id="chat-title">选择一个用户开始聊天</span>
+    </header>
+
     <div id="messages"></div>
+
     <form id="send-form">
       <input id="input" placeholder="输入消息..." autocomplete="off" disabled>
       <button type="submit" disabled>发送</button>
     </form>
   </main>
+
 </div>
 
 <script src="app.js"></script>
