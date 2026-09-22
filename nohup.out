@@ -1,0 +1,37 @@
+[2026-09-22T05:53:49.615Z] info  code-server 4.112.0 d7599ae360900ad55b503e3c840b417a1eae4798
+[2026-09-22T05:53:49.628Z] info  Using user-data-dir /root/.local/share/code-server
+[2026-09-22T05:53:49.676Z] info  Using config file /root/.config/code-server/config.yaml
+[2026-09-22T05:53:49.677Z] info  HTTP server listening on http://0.0.0.0:8080/
+[2026-09-22T05:53:49.677Z] info    - Authentication is disabled
+[2026-09-22T05:53:49.678Z] info    - Not serving HTTPS
+[2026-09-22T05:53:49.678Z] info  Session server listening on /root/.local/share/code-server/code-server-ipc.sock
+[13:54:42] 
+
+
+
+
+[13:54:43] Error: Unable to retrieve mac address (unexpected format)
+    at bH (file:///data/data/com.termux/files/usr/lib/code-server/lib/vscode/out/server-main.js:78:20289)
+    at SH (file:///data/data/com.termux/files/usr/lib/code-server/lib/vscode/out/server-main.js:78:20666)
+    at async file:///data/data/com.termux/files/usr/lib/code-server/lib/vscode/out/server-main.js:78:20583
+    at async Promise.all (index 2)
+    at async bq (file:///data/data/com.termux/files/usr/lib/code-server/lib/vscode/out/server-main.js:197:413)
+    at async Aq (file:///data/data/com.termux/files/usr/lib/code-server/lib/vscode/out/server-main.js:198:1392)
+[reconnection-grace-time] No CLI argument provided, using default: 10800000ms (10800s)
+[13:54:43] Extension host agent started.
+File not found: /data/data/com.termux/files/usr/lib/code-server/lib/vscode/node_modules/vsda/rust/web/vsda_bg.wasm
+File not found: /data/data/com.termux/files/usr/lib/code-server/lib/vscode/node_modules/vsda/rust/web/vsda.js
+[13:54:46] [127.0.0.1][df6e94af][ManagementConnection] New connection established.
+[13:54:48] [127.0.0.1][f41fc186][ExtensionHostConnection] New connection established.
+[13:54:50] [127.0.0.1][f41fc186][ExtensionHostConnection] <32674> Launched Extension Host Process.
+[13:54:54] [127.0.0.1][f41fc186][ExtensionHostConnection] <32674> [reconnection-grace-time] Extension host: read VSCODE_RECONNECTION_GRACE_TIME=10800000ms (10800s)
+
+[13:55:06] [127.0.0.1][df6e94af][ManagementConnection] The client has disconnected gracefully, so the connection will be disposed.
+[13:55:07] [127.0.0.1][f41fc186][ExtensionHostConnection] <32674> Extension Host Process exited with code: 0, signal: null.
+File not found: /data/data/com.termux/files/usr/lib/code-server/lib/vscode/node_modules/vsda/rust/web/vsda_bg.wasm
+File not found: /data/data/com.termux/files/usr/lib/code-server/lib/vscode/node_modules/vsda/rust/web/vsda.js
+[13:55:08] [127.0.0.1][5e08a4cf][ManagementConnection] New connection established.
+[13:55:10] [127.0.0.1][d2adece2][ExtensionHostConnection] New connection established.
+[13:55:10] [127.0.0.1][d2adece2][ExtensionHostConnection] <5383> Launched Extension Host Process.
+[13:55:13] [127.0.0.1][d2adece2][ExtensionHostConnection] <5383> [reconnection-grace-time] Extension host: read VSCODE_RECONNECTION_GRACE_TIME=10800000ms (10800s)
+
