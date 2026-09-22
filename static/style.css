@@ -1,0 +1,166 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: -apple-system, "Segoe UI", "PingFang SC", sans-serif;
+  background: #1e1f22;
+  color: #dbdee1;
+}
+
+.hidden { display: none !important; }
+
+/* 登录页 */
+#login {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 320px;
+  margin: 100px auto;
+  padding: 24px;
+  background: #2b2d31;
+  border-radius: 12px;
+}
+#login h2 { text-align: center; }
+#login input, #login button {
+  padding: 12px;
+  border-radius: 6px;
+  border: none;
+  font-size: 16px;
+}
+#login input { background: #1e1f22; color: #fff; }
+#login button { background: #5865f2; color: #fff; }
+
+/* 聊天区：占满整屏，flex 布局 */
+#chat {
+  display: flex;
+  height: 100vh;
+}
+
+/* 侧栏 */
+aside {
+  width: 200px;
+  background: #2b2d31;
+  padding: 16px;
+  overflow-y: auto;
+}
+aside .me {
+  font-weight: bold;
+  margin-bottom: 16px;
+  color: #fff;
+}
+aside .label {
+  font-size: 12px;
+  color: #949ba4;
+  margin-bottom: 8px;
+}
+#users { list-style: none; }
+#users li {
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 4px;
+}
+#users li:hover { background: #35373c; }
+#users li.active { background: #404249; color: #fff; }
+
+/* 主聊天区 */
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+header {
+  padding: 14px 16px;
+  background: #313338;
+  border-bottom: 1px solid #1e1f22;
+  font-weight: bold;
+}
+
+/* 消息列表：占满剩余空间，可滚动 */
+#messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.msg {
+  max-width: 75%;
+  padding: 9px 13px;
+  border-radius: 14px;
+  line-height: 1.45;
+  word-break: break-word;
+}
+.msg.them {
+  align-self: flex-start;
+  background: #383a40;
+}
+.msg.me {
+  align-self: flex-end;
+  background: #5865f2;
+  color: #fff;
+}
+.msg .meta {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-bottom: 3px;
+}
+.system {
+  align-self: center;
+  font-size: 12px;
+  color: #949ba4;
+}
+.error {
+  align-self: center;
+  color: #f23f43;
+  font-size: 13px;
+}
+
+/* 输入框：固定在底部，永远可见 */
+#send-form {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #313338;
+  flex-shrink: 0;
+}
+
+#send-form input {
+  flex: 1;
+  padding: 11px 15px;
+  border-radius: 22px;
+  border: none;
+  background: #383a40;
+  color: #fff;
+  font-size: 16px;
+  min-width: 0;
+}
+#send-form input:focus { outline: none; }
+
+#send-form button {
+  padding: 0 20px;
+  border: none;
+  border-radius: 22px;
+  background: #5865f2;
+  color: #fff;
+  font-size: 15px;
+}
+#send-form button:disabled { opacity: 0.5; }
+
+/* 窄屏：侧栏变窄一点，不折叠 */
+@media (max-width: 600px) {
+  aside { width: 120px; padding: 10px; }
+  aside .me { font-size: 13px; }
+  #users li { padding: 8px; font-size: 14px; }
+}
