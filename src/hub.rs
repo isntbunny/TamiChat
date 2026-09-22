@@ -1,4 +1,5 @@
-use crate::protocol::{ClientMsg, ServerMsg};
+use crate::db;
+use crate::protocol::{ClientMsg, HistoryItem, ServerMsg};
 use crate::AppState;
 use axum::extract::ws::{Message, WebSocket};
 use futures_util::{SinkExt, StreamExt};
@@ -37,12 +38,17 @@ impl Hub {
             false
         }
     }
+
+    async fn is_online(&self, user: &str) -> bool {
+        self.users.lock().await.contains_key(user)
+    }
 }
 
 pub async fn handle_socket(socket: WebSocket, username: String, state: AppState) {
     let hub = state.hub.clone();
+    let pool = state.pool.clone();
 
-    // 1. 检查重名
+    // 重名检查
     {
         let map = hub.users.lock().await;
         if map.contains_key(&username) {
@@ -51,30 +57,54 @@ pub async fn handle_socket(socket: WebSocket, username: String, state: AppState)
     }
 
     let (mut ws_tx, mut ws_rx) = socket.split();
-
-    // 2. 注册用户，建立发送通道
     let (tx, mut rx) = mpsc::unbounded_channel::<ServerMsg>();
+
     {
         let mut map = hub.users.lock().await;
         map.insert(username.clone(), tx);
     }
 
-    // 3. 发送任务：把 channel 里的消息写回 WebSocket
+    // ---- 发送任务 ----
     let mut send_task = tokio::spawn(async move {
         while let Some(msg) = rx.recv().await {
-            let text = serde_json::to_string(&msg).unwrap();
+            let text = match serde_json::to_string(&msg) {
+                Ok(t) => t,
+                Err(_) => continue,
+            };
             if ws_tx.send(Message::Text(text)).await.is_err() {
                 break;
             }
         }
     });
 
-    // 4. 通知所有人：有人上线
+    // ---- 上线后：推送离线消息 ----
+    let pool_clone = pool.clone();
+    let username_clone = username.clone();
+    let hub_clone = hub.clone();
+    tokio::spawn(async move {
+        if let Ok(msgs) = db::take_undelivered(&pool_clone, &username_clone).await {
+            for m in msgs {
+                let _ = hub_clone
+                    .send_to(
+                        &username_clone,
+                        ServerMsg::NewMessage {
+                            from: m.from_user,
+                            content: m.content,
+                            to_me: true,
+                            created_at: m.created_at,
+                        },
+                    )
+                    .await;
+            }
+        }
+    });
+
+    // ---- 广播上线 ----
     hub.broadcast_online().await;
-    let sys = ServerMsg::System {
-        content: format!("{} 上线了", username),
-    };
     {
+        let sys = ServerMsg::System {
+            content: format!("{} 上线了", username),
+        };
         let map = hub.users.lock().await;
         for (name, tx) in map.iter() {
             if name != &username {
@@ -83,9 +113,10 @@ pub async fn handle_socket(socket: WebSocket, username: String, state: AppState)
         }
     }
 
-    // 5. 接收任务：读客户端消息
-    let hub_clone = hub.clone();
-    let username_clone = username.clone();
+    // ---- 接收任务 ----
+    let hub_recv = hub.clone();
+    let pool_recv = pool.clone();
+    let username_recv = username.clone();
     let mut recv_task = tokio::spawn(async move {
         while let Some(Ok(msg)) = ws_rx.next().await {
             let text = match msg {
@@ -101,37 +132,81 @@ pub async fn handle_socket(socket: WebSocket, username: String, state: AppState)
 
             match client_msg {
                 ClientMsg::SendMessage { to, content } => {
-                    // 发给对方
-                    let delivered = hub_clone
-                        .send_to(
-                            &to,
-                            ServerMsg::NewMessage {
-                                from: username_clone.clone(),
-                                content: content.clone(),
-                                to_me: true,
-                            },
-                        )
-                        .await;
+                    let peer_online = hub_recv.is_online(&to).await;
 
-                    if !delivered {
-                        // 对方不在线，告诉发送者
-                        let _ = hub_clone
+                    // 存库（记下送达状态）
+                    let now = chrono::Utc::now().to_rfc3339();
+                    let _ = db::save_message(
+                        &pool_recv,
+                        &username_recv,
+                        &to,
+                        &content,
+                        peer_online,
+                    )
+                    .await;
+
+                    if peer_online {
+                        // 推给对方
+                        let _ = hub_recv
                             .send_to(
-                                &username_clone,
-                                ServerMsg::Error {
-                                    content: format!("{} 不在线", to),
+                                &to,
+                                ServerMsg::NewMessage {
+                                    from: username_recv.clone(),
+                                    content: content.clone(),
+                                    to_me: true,
+                                    created_at: now.clone(),
+                                },
+                            )
+                            .await;
+
+                        // 回显给自己
+                        let _ = hub_recv
+                            .send_to(
+                                &username_recv,
+                                ServerMsg::NewMessage {
+                                    from: username_recv.clone(),
+                                    content,
+                                    to_me: false,
+                                    created_at: now,
                                 },
                             )
                             .await;
                     } else {
-                        // 给自己也回显一份（to_me = false 表示自己发的）
-                        let _ = hub_clone
+                        // 对方离线：只回显给自己，对方上线时会收到
+                        let _ = hub_recv
                             .send_to(
-                                &username_clone,
+                                &username_recv,
                                 ServerMsg::NewMessage {
-                                    from: username_clone.clone(),
+                                    from: username_recv.clone(),
                                     content,
                                     to_me: false,
+                                    created_at: now,
+                                },
+                            )
+                            .await;
+                    }
+                }
+
+                ClientMsg::LoadHistory { with } => {
+                    if let Ok(rows) =
+                        db::history_between(&pool_recv, &username_recv, &with, 100).await
+                    {
+                        let items: Vec<HistoryItem> = rows
+                            .into_iter()
+                            .map(|m| HistoryItem {
+                                to_me: m.from_user != username_recv,
+                                from: m.from_user,
+                                content: m.content,
+                                created_at: m.created_at,
+                            })
+                            .collect();
+
+                        let _ = hub_recv
+                            .send_to(
+                                &username_recv,
+                                ServerMsg::History {
+                                    with,
+                                    messages: items,
                                 },
                             )
                             .await;
@@ -141,13 +216,13 @@ pub async fn handle_socket(socket: WebSocket, username: String, state: AppState)
         }
     });
 
-    // 6. 任一任务结束，清理
+    // ---- 等待任一任务结束 ----
     tokio::select! {
         _ = (&mut send_task) => recv_task.abort(),
         _ = (&mut recv_task) => send_task.abort(),
     }
 
-    // 7. 移除用户，广播离线
+    // ---- 清理 + 广播离线 ----
     {
         let mut map = hub.users.lock().await;
         map.remove(&username);

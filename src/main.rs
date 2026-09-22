@@ -1,3 +1,4 @@
+mod db;
 mod hub;
 mod protocol;
 
@@ -8,18 +9,22 @@ use axum::{
     Router,
 };
 use hub::Hub;
+use sqlx::SqlitePool;
 use std::sync::Arc;
 use tower_http::services::ServeDir;
 
 #[derive(Clone)]
 pub struct AppState {
     pub hub: Arc<Hub>,
+    pub pool: SqlitePool,
 }
 
 #[tokio::main]
 async fn main() {
+    let pool = db::init_pool().await;
     let state = AppState {
         hub: Arc::new(Hub::new()),
+        pool,
     };
 
     let app = Router::new()

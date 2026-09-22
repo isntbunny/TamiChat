@@ -3,24 +3,34 @@ use serde::{Deserialize, Serialize};
 #[derive(Deserialize, Debug)]
 #[serde(tag = "type")]
 pub enum ClientMsg {
-    /// 发消息给对方
     SendMessage { to: String, content: String },
+    /// 请求和某人的历史消息
+    LoadHistory { with: String },
 }
 
 #[derive(Serialize, Debug, Clone)]
 #[serde(tag = "type")]
 pub enum ServerMsg {
-    /// 在线用户列表更新
     OnlineUsers { users: Vec<String> },
-    /// 收到一条新消息
     NewMessage {
         from: String,
         content: String,
-        /// 是否是发给自己的（前端用来区分左右）
         to_me: bool,
+        created_at: String,
     },
-    /// 系统提示（上线/离线）
+    /// 历史消息批量下发
+    History {
+        with: String,
+        messages: Vec<HistoryItem>,
+    },
     System { content: String },
-    /// 错误
     Error { content: String },
+}
+
+#[derive(Serialize, Debug, Clone)]
+pub struct HistoryItem {
+    pub from: String,
+    pub content: String,
+    pub to_me: bool,
+    pub created_at: String,
 }

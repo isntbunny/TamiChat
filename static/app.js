@@ -40,6 +40,9 @@ function handle(msg) {
     case "Error":
       renderError(msg.content);
       break;
+    case "History":
+      renderHistory(msg.with, msg.messages);
+      break;
   }
 }
 
@@ -63,6 +66,11 @@ function selectPeer(peer) {
   document.querySelector("#send-form button").disabled = false;
   document.getElementById("input").focus();
   renderUsersRefresh();
+
+  // 拉历史
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({ type: "LoadHistory", with: peer }));
+  }
 }
 
 function renderUsersRefresh() {
@@ -121,6 +129,19 @@ function renderError(text) {
   div.textContent = "⚠ " + text;
   const box = document.getElementById("messages");
   box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+
+function renderHistory(peer, messages) {
+  if (peer !== currentPeer) return; // 切走了，忽略
+  const box = document.getElementById("messages");
+  box.innerHTML = "";
+  messages.forEach((m) => {
+    const div = document.createElement("div");
+    div.className = "msg " + (m.to_me ? "them" : "me");
+    div.innerHTML = `<div class="meta">${m.from}</div>${escapeHtml(m.content)}`;
+    box.appendChild(div);
+  });
   box.scrollTop = box.scrollHeight;
 }
 
